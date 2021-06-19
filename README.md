@@ -1,5 +1,6 @@
-# Lamport-Signature
-Lamport One Time Signature Scheme in Python
+# Lamport-Signature in Python
+
+The Lamport One Time Signature is a method for constructing a digital signature. It normally involves the use of a cryptographic hash function, like SHA-256. It can only be used to securely sign one message. 
 
 ## Running
 
