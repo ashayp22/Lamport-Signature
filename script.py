@@ -7,7 +7,7 @@ import sys
 
 #Key Generation - generates a public and private key
 def keygen():
-    #start out with 2 lists
+    #start out with 2 lists (list comprehension)
     sk = [[0 for _ in range(256)] for _ in range(2)]
     pk = [[0 for _ in range(256)] for _ in range(2)]
 
@@ -38,10 +38,10 @@ def sign(message, sk):
     #from our private key. This is why this is a one-time signature.
     for i in range(256):
         # Shift our number to the right by i places, which is the same as dividing by 2^i
-        # With this, we can determine if the leftmost bit is a 0 or 1.
+        # With this, we can determine if the RIGHTMOST bit is a 0 or 1.
         # source: https://wiki.python.org/moin/BitwiseOperators
-        l = hashed >> i & 1
-
+        l = hashed >> i
+        l = l & 1
         sig[i] = sk[l][i]
 
     return sig
@@ -52,13 +52,15 @@ def verify(sig, message, pk):
     hashed = hashlib.sha256(message.encode("utf-8")).digest()
 
     # convert the hash (array of bytes) to its integer representation
-    hashed = int.from_bytes(hashed, byteorder=sys.byteorder)
+    hashed = int.from_bytes(hashed, byteorder=sys.byteorder) #native byte order of the host system - https://docs.python.org/3/library/stdtypes.html
 
     #For each bit, pick the corresponding number from our public key.
     #Then, if we compare this to a hash of each number in the signature
     #and there is a difference, then we know that the signature is not valid
     for i in range(256):
-        l = hashed >> i & 1
+        l = hashed >> i
+        l = l & 1
+
         other = hashlib.sha256(sig[i]).digest()
 
         if pk[l][i] != other:
